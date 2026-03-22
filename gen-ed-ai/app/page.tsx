@@ -1,0 +1,553 @@
+"use client";
+
+import { useState } from "react";
+
+const days = ["M", "T", "W", "R", "F"];
+const terms = ["A", "B", "Full Semester"];
+const geneds = [
+  "Advanced Composition",
+  "Cultural Studies",
+  "Humanities & the Arts",
+  "Natural Sciences & Technology",
+  "Quantitative Reasoning",
+  "Social & Behavioral Sciences",
+];
+
+export default function GenEdCourseRecommenderPage() {
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
+  const [gened, setGened] = useState("");
+  const [credits, setCredits] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [extra, setExtra] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState("");
+
+  const toggle = (arr: string[], setArr: (arr: string[]) => void, val: string) =>
+    setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setResult("");
+    const prompt = `You are a helpful UIUC course advisor. A student is looking for gen-ed course recommendations.
+
+Their preferences:
+- Gen-ed category: ${gened || "Any"}
+- Credit hours: ${credits || "Any"}
+- Part of term: ${selectedTerms.length ? selectedTerms.join(", ") : "Any"}
+- Preferred days: ${selectedDays.length ? selectedDays.join(", ") : "Any"}
+- Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
+- Extra preferences: ${extra || "None"}
+
+Recommend 3–5 specific UIUC gen-ed courses that could match these preferences. For each, give the course name, a brief description, typical schedule, and why it fits the student's preferences. Be specific, friendly, and helpful.`;
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      const text = data.content?.map((b: { text: string }) => b.text || "").join("") || "No response.";
+      setResult(text);
+    } catch (e) {
+      setResult("Something went wrong. Please try again.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", minHeight: "100vh", background: "#faf7f2", color: "#1a1a1a" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { background: #faf7f2; }
+
+        .page { font-family: 'DM Sans', sans-serif; }
+
+        .hero-bar {
+          background: #1a1a1a;
+          color: #faf7f2;
+          padding: 14px 48px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .hero-bar-label {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          opacity: 0.6;
+        }
+        .hero-bar-logo {
+          font-family: 'Playfair Display', serif;
+          font-size: 20px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+        }
+
+        .hero {
+          background: #e8e0d4;
+          border-bottom: 2px solid #1a1a1a;
+          padding: 64px 48px 56px;
+          position: relative;
+          overflow: hidden;
+        }
+        .hero::before {
+          content: "✦";
+          position: absolute;
+          right: 60px;
+          top: 40px;
+          font-size: 96px;
+          color: #c5b89a;
+          opacity: 0.5;
+          line-height: 1;
+        }
+        .hero-kicker {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #7a6e5f;
+          margin-bottom: 16px;
+        }
+        .hero-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(36px, 5vw, 64px);
+          font-weight: 900;
+          line-height: 1.05;
+          color: #1a1a1a;
+          max-width: 640px;
+        }
+        .hero-title em {
+          font-style: italic;
+          color: #6b5d4f;
+        }
+        .hero-sub {
+          margin-top: 20px;
+          font-size: 16px;
+          color: #5a5248;
+          max-width: 480px;
+          line-height: 1.65;
+          font-weight: 300;
+        }
+
+        .layout {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 48px 80px;
+          align-items: start;
+        }
+        @media (max-width: 820px) {
+          .layout { grid-template-columns: 1fr; padding: 0 24px 60px; }
+          .hero { padding: 40px 24px; }
+          .hero-bar { padding: 14px 24px; }
+        }
+
+        .form-col {
+          padding: 48px 48px 48px 0;
+          border-right: 1.5px solid #d4ccc0;
+        }
+        @media (max-width: 820px) {
+          .form-col { border-right: none; padding: 40px 0 0; }
+        }
+
+        .result-col {
+          padding: 48px 0 48px 48px;
+          position: sticky;
+          top: 24px;
+        }
+        @media (max-width: 820px) {
+          .result-col { padding: 32px 0 0; }
+        }
+
+        .section-label {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: #9a8e7e;
+          margin-bottom: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .section-label::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #d4ccc0;
+        }
+
+        .field-group {
+          margin-bottom: 32px;
+        }
+
+        .field-label {
+          font-family: 'Playfair Display', serif;
+          font-size: 18px;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: 10px;
+          display: block;
+        }
+
+        .styled-select {
+          width: 100%;
+          appearance: none;
+          -webkit-appearance: none;
+          background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a1a1a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 18px center;
+          border: 1.5px solid #c5bdb0;
+          border-radius: 4px;
+          padding: 13px 44px 13px 16px;
+          font-size: 15px;
+          font-family: 'DM Sans', sans-serif;
+          color: #1a1a1a;
+          cursor: pointer;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .styled-select:focus {
+          outline: none;
+          border-color: #1a1a1a;
+          box-shadow: 0 0 0 3px rgba(26,26,26,0.08);
+        }
+
+        .chip-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .chip {
+          border: 1.5px solid #c5bdb0;
+          background: #fff;
+          border-radius: 3px;
+          padding: 8px 18px;
+          font-size: 14px;
+          font-family: 'DM Sans', sans-serif;
+          cursor: pointer;
+          transition: all 0.15s;
+          user-select: none;
+          font-weight: 400;
+          color: #5a5248;
+        }
+        .chip:hover { border-color: #1a1a1a; color: #1a1a1a; }
+        .chip.active {
+          background: #1a1a1a;
+          border-color: #1a1a1a;
+          color: #faf7f2;
+        }
+
+        .time-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .time-label {
+          font-size: 11px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #9a8e7e;
+          margin-bottom: 6px;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .styled-time {
+          width: 100%;
+          border: 1.5px solid #c5bdb0;
+          background: #fff;
+          border-radius: 4px;
+          padding: 12px 14px;
+          font-size: 15px;
+          font-family: 'DM Sans', sans-serif;
+          color: #1a1a1a;
+          transition: border-color 0.2s;
+        }
+        .styled-time:focus {
+          outline: none;
+          border-color: #1a1a1a;
+        }
+
+        .styled-textarea {
+          width: 100%;
+          border: 1.5px solid #c5bdb0;
+          background: #fff;
+          border-radius: 4px;
+          padding: 14px 16px;
+          font-size: 15px;
+          font-family: 'DM Sans', sans-serif;
+          color: #1a1a1a;
+          resize: vertical;
+          line-height: 1.6;
+          transition: border-color 0.2s;
+        }
+        .styled-textarea:focus {
+          outline: none;
+          border-color: #1a1a1a;
+        }
+        .styled-textarea::placeholder { color: #b0a898; }
+
+        .submit-btn {
+          width: 100%;
+          background: #1a1a1a;
+          color: #faf7f2;
+          border: none;
+          border-radius: 4px;
+          padding: 16px 24px;
+          font-size: 15px;
+          font-family: 'Playfair Display', serif;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s;
+          margin-top: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+        .submit-btn:hover:not(:disabled) { background: #3d352c; transform: translateY(-1px); }
+        .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        .result-placeholder {
+          border: 1.5px dashed #c5bdb0;
+          border-radius: 4px;
+          padding: 40px 32px;
+          text-align: center;
+          color: #b0a898;
+        }
+        .result-placeholder-icon { font-size: 36px; margin-bottom: 12px; }
+        .result-placeholder-text { font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; }
+        .result-placeholder-sub { font-size: 13px; margin-top: 6px; font-family: 'DM Sans', sans-serif; }
+
+        .result-card {
+          background: #fff;
+          border: 1.5px solid #d4ccc0;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+        .result-card-header {
+          background: #1a1a1a;
+          color: #faf7f2;
+          padding: 16px 24px;
+          font-family: 'Playfair Display', serif;
+          font-size: 13px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .result-card-body {
+          padding: 24px;
+          font-size: 14.5px;
+          line-height: 1.75;
+          color: #3d352c;
+          font-family: 'DM Sans', sans-serif;
+          white-space: pre-wrap;
+          max-height: 620px;
+          overflow-y: auto;
+        }
+
+        .loading-dots span {
+          display: inline-block;
+          width: 6px; height: 6px;
+          background: #faf7f2;
+          border-radius: 50%;
+          margin: 0 2px;
+          animation: bounce 1.2s infinite;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+          0%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-6px); }
+        }
+
+        .divider { height: 1.5px; background: #d4ccc0; margin: 28px 0; }
+
+        .ornament {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: #c5b89a;
+          font-size: 12px;
+          letter-spacing: 0.3em;
+          margin-bottom: 28px;
+        }
+        .ornament::before, .ornament::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #d4ccc0;
+        }
+      `}</style>
+
+      <div className="page">
+        {/* Top bar */}
+        <div className="hero-bar">
+          <span className="hero-bar-label">University of Illinois · Urbana-Champaign</span>
+          <span className="hero-bar-logo">GEN•ED</span>
+          <span className="hero-bar-label">Course Finder</span>
+        </div>
+
+        {/* Hero */}
+        <div className="hero">
+          <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+            <p className="hero-kicker">✦ AI-Powered Advising Tool · Spring 2026</p>
+            <h1 className="hero-title">Find your next <em>great</em> gen-ed course.</h1>
+            <p className="hero-sub">
+              Share your schedule constraints and interests — our AI advisor will match you with the best-fit options from the UIUC catalog.
+            </p>
+          </div>
+        </div>
+
+        {/* Main layout */}
+        <div className="layout">
+          {/* Form */}
+          <div className="form-col">
+            <div className="ornament">PREFERENCES</div>
+
+            <div className="field-group">
+              <span className="section-label">Category</span>
+              <label className="field-label">Gen-Ed Requirement</label>
+              <select className="styled-select" value={gened} onChange={e => setGened(e.target.value)}>
+                <option value="">Any category</option>
+                {geneds.map(g => <option key={g}>{g}</option>)}
+              </select>
+            </div>
+
+            <div className="field-group">
+              <span className="section-label">Load</span>
+              <label className="field-label">Credit Hours</label>
+              <select className="styled-select" value={credits} onChange={e => setCredits(e.target.value)}>
+                <option value="">Any credit count</option>
+                {[1,2,3,4].map(n => <option key={n}>{n} credit{n > 1 ? "s" : ""}</option>)}
+              </select>
+            </div>
+
+            <div className="field-group">
+              <span className="section-label">Semester Portion</span>
+              <label className="field-label">Part of Term</label>
+              <div className="chip-row">
+                {terms.map(t => (
+                  <div
+                    key={t}
+                    className={`chip${selectedTerms.includes(t) ? " active" : ""}`}
+                    onClick={() => toggle(selectedTerms, setSelectedTerms, t)}
+                  >{t}</div>
+                ))}
+              </div>
+            </div>
+
+            <div className="divider" />
+
+            <div className="field-group">
+              <span className="section-label">Schedule</span>
+              <label className="field-label">Days of the Week</label>
+              <div className="chip-row">
+                {days.map(d => (
+                  <div
+                    key={d}
+                    className={`chip${selectedDays.includes(d) ? " active" : ""}`}
+                    onClick={() => toggle(selectedDays, setSelectedDays, d)}
+                    style={{ minWidth: 48, textAlign: "center" }}
+                  >{d}</div>
+                ))}
+              </div>
+            </div>
+
+            <div className="field-group">
+              <label className="field-label">Preferred Time Window</label>
+              <div className="time-row">
+                <div>
+                  <p className="time-label">Earliest Start</p>
+                  <input type="time" className="styled-time" value={startTime} onChange={e => setStartTime(e.target.value)} />
+                </div>
+                <div>
+                  <p className="time-label">Latest End</p>
+                  <input type="time" className="styled-time" value={endTime} onChange={e => setEndTime(e.target.value)} />
+                </div>
+              </div>
+              <p style={{ fontSize: 12, color: "#9a8e7e", marginTop: 8, fontFamily: "'DM Sans', sans-serif" }}>
+                e.g. 10:00 – 14:00 filters out early morning &amp; evening sections
+              </p>
+            </div>
+
+            <div className="divider" />
+
+            <div className="field-group">
+              <span className="section-label">Open-Ended</span>
+              <label className="field-label">Additional Preferences</label>
+              <textarea
+                className="styled-textarea"
+                rows={4}
+                placeholder="e.g. I want a light workload, something interesting for an international student, no Friday classes…"
+                value={extra}
+                onChange={e => setExtra(e.target.value)}
+              />
+            </div>
+
+            <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
+              {loading ? (
+                <>Thinking <span className="loading-dots"><span/><span/><span/></span></>
+              ) : (
+                <>✦ &nbsp; Ask AI for Recommendations</>
+              )}
+            </button>
+          </div>
+
+          {/* Result */}
+          <div className="result-col">
+            <div className="ornament">RECOMMENDATIONS</div>
+
+            {!result && !loading && (
+              <div className="result-placeholder">
+                <div className="result-placeholder-icon">✦</div>
+                <div className="result-placeholder-text">Your recommendations will appear here.</div>
+                <div className="result-placeholder-sub">Fill in the form and click the button to get started.</div>
+              </div>
+            )}
+
+            {loading && (
+              <div className="result-placeholder">
+                <div className="result-placeholder-icon" style={{ animation: "bounce 1s infinite" }}>◎</div>
+                <div className="result-placeholder-text">Consulting the course catalog…</div>
+                <div className="result-placeholder-sub">Finding the best matches for you.</div>
+              </div>
+            )}
+
+            {result && (
+              <div className="result-card">
+                <div className="result-card-header">
+                  ✦ &nbsp; AI Course Recommendations
+                </div>
+                <div className="result-card-body">{result}</div>
+              </div>
+            )}
+
+            {!result && (
+              <div style={{ marginTop: 32, padding: "24px 0", borderTop: "1.5px solid #d4ccc0" }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, fontStyle: "italic", color: "#9a8e7e", lineHeight: 1.7 }}>
+                  "The purpose of a liberal education is not to teach you a trade, but to teach you to think."
+                </p>
+                <p style={{ fontSize: 11, color: "#b0a898", marginTop: 8, letterSpacing: "0.1em", fontFamily: "'DM Sans', sans-serif", textTransform: "uppercase" }}>
+                  — On gen-ed requirements
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
