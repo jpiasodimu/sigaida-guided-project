@@ -4,19 +4,60 @@ import { useState } from "react";
 
 const days = ["M", "T", "W", "R", "F"];
 const terms = ["A", "B", "Full Semester"];
-const geneds = [
-  "Advanced Composition",
-  "Cultural Studies",
-  "Humanities & the Arts",
-  "Natural Sciences & Technology",
-  "Quantitative Reasoning",
-  "Social & Behavioral Sciences",
+const GENED_TREE = [
+  {
+    id: "ac",
+    label: "Advanced Composition",
+    subs: []
+  },
+  {
+    id: "cs",
+    label: "Cultural Studies",
+    subs: [
+      { id: "cs-usm", label: "US Minority Cultures", note: "" },
+      { id: "cs-nw",  label: "NW — Non-Western", note: "" },
+      { id: "cs-wcc", label: "WCC — Western / Comparative Cultures", note: "" },
+    ],
+  },
+  {
+    id: "ha",
+    label: "Humanities & the Arts",
+    subs: [
+      { id: "ha-hpp", label: "Historical & Philosophical Perspectives", note: "" },
+      { id: "ha-la",  label: "Literature & the Arts", note: "" },
+    ],
+  },
+  {
+    id: "ns",
+    label: "Natural Sciences & Technology",
+    subs: [
+      { id: "ns-ps", label: "Physical Sciences", note: "" },
+      { id: "ns-ls", label: "Life Sciences", note: "" },
+    ],
+  },
+  {
+    id: "qr",
+    label: "Quantitative Reasoning",
+    subs: [
+      { id: "qr-1", label: "QR1", note: "" },
+      { id: "qr-2", label: "QR2", note: "" },
+    ],
+  },
+  {
+    id: "sb",
+    label: "Social & Behavioral Sciences",
+    subs: [
+      { id: "sb-ss", label: "Social Sciences", note: "" },
+      { id: "sb-bs", label: "Behavioral Sciences", note: "" },
+    ],
+  },
 ];
 
-export default function GenEdCourseRecommenderPage() {
+export default function Page() {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
-  const [gened, setGened] = useState("");
+  const [openCats, setOpenCats] = useState<string[]>([]);
+  const [selectedSubs, setSelectedSubs] = useState<string[]>([]);
   const [credits, setCredits] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -33,7 +74,7 @@ export default function GenEdCourseRecommenderPage() {
     const prompt = `You are a helpful UIUC course advisor. A student is looking for gen-ed course recommendations.
 
 Their preferences:
-- Gen-ed category: ${gened || "Any"}
+- Gen-ed subcategories: ${selectedSubs.length ? selectedSubs.join(", ") : "Any"}
 - Credit hours: ${credits || "Any"}
 - Part of term: ${selectedTerms.length ? selectedTerms.join(", ") : "Any"}
 - Preferred days: ${selectedDays.length ? selectedDays.join(", ") : "Any"}
@@ -420,10 +461,56 @@ Recommend 3–5 specific UIUC gen-ed courses that could match these preferences.
             <div className="field-group">
               <span className="section-label">Category</span>
               <label className="field-label">Gen-Ed Requirement</label>
-              <select className="styled-select" value={gened} onChange={e => setGened(e.target.value)}>
-                <option value="">Any category</option>
-                {geneds.map(g => <option key={g}>{g}</option>)}
-              </select>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {GENED_TREE.map(cat => {
+                  const isOpen = openCats.includes(cat.id);
+                  const isSingle = cat.subs.length === 0;
+                  const isSelected = isSingle && selectedSubs.includes(cat.id);
+                  const anySubSelected = isSingle ? isSelected : cat.subs.some(s => selectedSubs.includes(s.id));
+                  const handleCatClick = () => {
+                    if (isSingle) {
+                      setSelectedSubs(isSelected ? selectedSubs.filter(id => id !== cat.id) : [...selectedSubs, cat.id]);
+                    } else {
+                      setOpenCats(isOpen ? openCats.filter(id => id !== cat.id) : [...openCats, cat.id]);
+                    }
+                  };
+                  return (
+                    <div key={cat.id} style={{ border: "1.5px solid", borderColor: anySubSelected ? "#1a1a1a" : "#c5bdb0", borderRadius: 4, overflow: "hidden", background: "#fff" }}>
+                      <div
+                        onClick={handleCatClick}
+                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 16px", cursor: "pointer", background: anySubSelected ? "#1a1a1a" : "#fff", transition: "background 0.15s" }}
+                      >
+                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: anySubSelected ? 600 : 400, color: anySubSelected ? "#faf7f2" : "#1a1a1a" }}>{cat.label}</span>
+                        {isSingle
+                          ? <div style={{ width: 16, height: 16, border: "1.5px solid", borderColor: isSelected ? "#faf7f2" : "#c5bdb0", borderRadius: 3, background: isSelected ? "#faf7f2" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>{isSelected && <span style={{ color: "#1a1a1a", fontSize: 10 }}>✓</span>}</div>
+                          : <span style={{ fontSize: 10, color: anySubSelected ? "#c5b89a" : "#9a8e7e", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", display: "inline-block" }}>▼</span>
+                        }
+                      </div>
+                      {isOpen && (
+                        <div style={{ borderTop: "1px solid #e8e0d4", padding: "10px 16px 12px", display: "flex", flexDirection: "column", gap: 8, background: "#faf7f2" }}>
+                          {cat.subs.map(sub => {
+                            const checked = selectedSubs.includes(sub.id);
+                            return (
+                              <label key={sub.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+                                <div
+                                  onClick={() => setSelectedSubs(checked ? selectedSubs.filter(id => id !== sub.id) : [...selectedSubs, sub.id])}
+                                  style={{ marginTop: 2, width: 16, height: 16, border: "1.5px solid", borderColor: checked ? "#1a1a1a" : "#c5bdb0", borderRadius: 3, background: checked ? "#1a1a1a" : "#fff", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+                                >
+                                  {checked && <span style={{ color: "#faf7f2", fontSize: 10, lineHeight: 1 }}>✓</span>}
+                                </div>
+                                <div>
+                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#3d352c" }}>{sub.label}</span>
+                                  {sub.note && <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: "#9a8e7e", marginTop: 2, lineHeight: 1.5 }}>{sub.note}</p>}
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="field-group">
@@ -462,6 +549,19 @@ Recommend 3–5 specific UIUC gen-ed courses that could match these preferences.
                     onClick={() => toggle(selectedDays, setSelectedDays, d)}
                     style={{ minWidth: 48, textAlign: "center" }}
                   >{d}</div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: "6px 18px" }}>
+                {[
+                  ["M", "Monday"],
+                  ["T", "Tuesday"],
+                  ["W", "Wednesday"],
+                  ["R", "Thursday"],
+                  ["F", "Friday"],
+                ].map(([key, full]) => (
+                  <span key={key} style={{ fontSize: 11, fontFamily: "'DM Sans', sans-serif", color: "#9a8e7e", letterSpacing: "0.04em" }}>
+                    <span style={{ fontWeight: 600, color: "#6b5d4f" }}>{key}</span> = {full}
+                  </span>
                 ))}
               </div>
             </div>
