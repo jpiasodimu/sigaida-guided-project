@@ -8,8 +8,7 @@
 sigaida-guided-project/
  
  bus-data/ 
- 
-  data/ --> Sample data from MTD website GTFS Feed
+ data/ --> Sample data from MTD website GTFS Feed
   output/ --> Collected CSV data
   src/ --> Python script (main) and notebook
  web-app/         
