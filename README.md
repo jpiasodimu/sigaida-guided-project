@@ -1,7 +1,7 @@
 # SIGAIDA Guided Project
 
 ## What this project does
-- This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website.
+- This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. (Will update soon)
 
 
 ## Project Structure
