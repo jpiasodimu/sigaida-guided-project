@@ -6,14 +6,14 @@
 
 ## Project Structure
 sigaida-guided-project/
-├── bus-data/ 
-├── data/ --> Sample data from MTD website GTFS Feed
-├── output/ --> Collected CSV data
-├── src/ --> Python script (main) and notebook
-├── web-app/         
-├── venv/            
-├── .env
-└── README.md
+ bus-data/ 
+  data/ --> Sample data from MTD website GTFS Feed
+  output/ --> Collected CSV data
+  src/ --> Python script (main) and notebook
+ web-app/         
+ venv/            
+  .env
+ README.md
 
 ## Setup
 1. Clone the repo
