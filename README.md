@@ -1,29 +1,44 @@
 # SIGAIDA Guided Project
 
 ## What this project does
-- Brief description of the bus data collector and AI course recommender
+- This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. (Will update soon)
 
 
 ## Project Structure
-your-project/
-├── bus-data/        
-├── web-app/         
-├── venv/            
-├── .env
-└── README.md
+sigaida-guided-project/
+
+&emsp;bus-data/ 
+
+ &emsp;&emsp;data/ --> Sample data from MTD website GTFS Feed
+
+  &emsp;&emsp;output/ --> Collected CSV data
+
+  &emsp;&emsp;src/ --> Python script (main) and notebook
+
+&emsp;web-app/         
+
+&emsp;venv/            
+
+ &emsp;&emsp;.env
+
+&emsp;README.md
 
 ## Setup
 1. Clone the repo
 2. Create a virtual environment
-3. Run pip install -r requirements.txt
+3. Install dependencies: Run pip install -r requirements.txt
 4. Add your API key to .env
 
 ## How to run the data collector
-python bus-data/collect.py
+python bus-data/src/main.py
 
 ## How to run the web app
-(fill in later)
+In progress...
 
 ## Contributors
-- Your name — bus data collection
-- Partner's name — web app
+- Jpia S. — bus data collection
+- Sandy L. — web app
+
+## Tools & Attribution
+- Claude (Anthropic) - code assistance and debugging throughout development
+- ChatGPT (OpenAI) - initial web app template generation
