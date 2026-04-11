@@ -2,6 +2,7 @@
 
 ## What this project does
 - This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. (Will update soon)
+- This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. (Will update soon)
 
 
 ## Project Structure
@@ -19,12 +20,15 @@ sigaida-guided-project/
 1. Clone the repo
 2. Create a virtual environment
 3. Install dependencies: Run pip install -r requirements.txt
+3. Install dependencies: Run pip install -r requirements.txt
 4. Add your API key to .env
 
 ## How to run the data collector
 python bus-data/src/main.py
+python bus-data/src/main.py
 
 ## How to run the web app
+In progress...
 In progress...
 
 ## Contributors
