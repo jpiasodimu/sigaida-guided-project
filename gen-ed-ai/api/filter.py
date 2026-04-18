@@ -1,8 +1,9 @@
 import pandas as pd
-
+from datetime import datetime
 # Maps raw course type names from the dataset to 5 simplified types.
 # Types not in this dict (or mapped to None) are unsupported and will
 # cause the whole course to be rejected.
+
 RAW_TO_SIMPLE_TYPE = {
     "Lecture": "Lecture",
     "Online Lecture": "Lecture",
@@ -41,6 +42,7 @@ def normalize_type(type_value):
 
 
 def row_matches_schedule(row, days=None, start_time=None, end_time=None):
+    
     """
     Check whether ONE section (row) fits the user's schedule constraints.
     Returns True if it fits, False if it doesn't.
@@ -59,6 +61,13 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     # Time filter: class must fit fully within the user's window
     row_start = row.get("Start Time")
     row_end = row.get("End Time")
+
+    if row_start:
+        row_start = datetime.strptime(str(row_start), "%I:%M %p").time()
+
+    if row_end:
+        row_end = datetime.strptime(str(row_end), "%I:%M %p").time()
+
 
     if start_time is not None and row_start is not None:
         if row_start < start_time:
