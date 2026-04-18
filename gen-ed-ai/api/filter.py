@@ -57,8 +57,8 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
             return False
 
     # Time filter: class must fit fully within the user's window
-    row_start = row.get("Start Time Clean")
-    row_end = row.get("End Time Clean")
+    row_start = row.get("Start Time")
+    row_end = row.get("End Time")
 
     if start_time is not None and row_start is not None:
         if row_start < start_time:
@@ -139,7 +139,7 @@ def filter_courses(
     Step 2: Group by Subject + Number and validate each full course bundle.
 
     Args:
-        df: cleaned courses DataFrame (with Credit Hours Clean, Start Time Clean, End Time Clean)
+        df: cleaned courses DataFrame (with Credit Hours, Start Time, End Time)
         gen_ed: gen-ed category string, e.g. "Humanities"
         credits: number of credit hours, e.g. 3
         days: list of available days, e.g. ["M", "W", "F"]
@@ -159,7 +159,7 @@ def filter_courses(
         ]
 
     if credits is not None:
-        result = result[result["Credit Hours Clean"] == credits]
+        result = result[result["Credit Hours"] == credits]
 
     if part_of_term:
         result = result[

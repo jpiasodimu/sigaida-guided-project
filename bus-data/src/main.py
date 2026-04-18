@@ -42,7 +42,6 @@ while True:
     #index = false, column of indices unincluded
         with open("./bus-data/output/departures.csv", "a") as f:
             df_all.to_csv(f, index = False, header=f.tell() == 0)   
-
     time.sleep(60)
 
 

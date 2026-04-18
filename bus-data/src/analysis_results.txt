@@ -1,0 +1,39 @@
+Findings from Linear Regression and Bus Data Cleaning
+
+"Hour":
+Coefficient: .0949
+Indicates a positive increase in delays/minutes throughout the day, implying 
+rush hour towards the end of the day (afternoon/nighttime)
+
+"Weekday"
+Coefficient: -.217
+Negative increase in delays/minute perhaps indicates rush hour lasts longer towards the end of the week
+because of students going home for the weekend, less classes, or decreased class attendance on Fridays.
+
+
+----Used one-hot encoding for these variables---
+"Direction"
+
+Unfortunately, we failed to include a bus stop that included a southbound bus, so our data does not 
+account for the delay rate of southbound buses compared to buses going in other directions.
+However, we saw that relative to the East-bound bus (12E teal), the north and south bound buses were delayed less per minute  -.128, and -.081 respectively
+indicating that the 12E Teal bus experiences more traffic compared to the N and S directions.
+
+"Headsign":
+Coefficient: Top 2 - 12E Teal (.209) + 22N Illini (.454)
+The remaining 2 buses were the 10W Gold, and the 13N silver. Based on our results, the Illini experienced the most delays relative to the 10W gold bus,
+with the 12E Teal coming in second with slightly less delays compared to the 22N Illini. This confirmed our predictions, since 22N Illini covers a broader range of main campus - 
+hitting main stops such as the Illini Union, Main Library, Transit Union, Goodwin Ave, ISR, and more. The Teal's stops are limited to Illini Union, Wright and Healey, Chemical and Life
+Sciences, which are still popular stops but less busy compared to the 22N Illini'S
+
+
+"Stop_id":
+Coefficient: Transit Plaza - .056
+
+Compared to the other 8 stops, the Transit Plaza experienced the most delays/minute compared to our baseline stop, 
+5th and Armory. Given that the Transit Plaza is near a key hub on campus, situated by the Illini Bookstore, Main Library, Green Street, Illini Union, the Quad, and more,
+this result was not surprising. 5th and Armory is also near key locations such as the Armory, multiple frat houses, and the UI Skating Rink. In addition, it is a stop for the Peoria Charter
+that students may utilize to return to their dorms after dropoff, so it's close delay rate is unsurprising. All other stops had less 
+delays/minute relative to 5th and Armory, indicating that they are less frequented stops around campus.
+
+
