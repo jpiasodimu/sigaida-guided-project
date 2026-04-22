@@ -62,10 +62,10 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     row_start = row.get("Start Time")
     row_end = row.get("End Time")
 
-    if row_start:
+    if row_start and pd.notna(row_start):
         row_start = datetime.strptime(str(row_start), "%I:%M %p").time()
 
-    if row_end:
+    if row_end and pd.notna(row_end):
         row_end = datetime.strptime(str(row_end), "%I:%M %p").time()
 
 
@@ -184,5 +184,11 @@ def filter_courses(
             end_time=end_time,
         )
     )
-
+    if days:
+        wanted_days = set(days)
+        filtered = filtered[
+            filtered["Days of Week"].fillna("").apply(
+                lambda x: bool(set(x).intersection(wanted_days))
+            )
+        ]
     return filtered
