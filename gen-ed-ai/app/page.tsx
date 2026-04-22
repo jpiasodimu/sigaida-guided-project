@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
 
 const days = ["M", "T", "W", "R", "F"];
 const terms = ["A", "B", "Full Semester"];
+  
 const GENED_TREE = [
   {
     id: "ac",
@@ -14,41 +16,41 @@ const GENED_TREE = [
     id: "cs",
     label: "Cultural Studies",
     subs: [
-      { id: "cs-usm", label: "US Minority Cultures", note: "" },
-      { id: "cs-nw",  label: "NW — Non-Western", note: "" },
-      { id: "cs-wcc", label: "WCC — Western / Comparative Cultures", note: "" },
+      { id: "cs-usm", label: "Cultural Studies - US Minority", note: "" },
+      { id: "cs-nw",  label: "Cultural Studies - Non-West", note: "" },
+      { id: "cs-wcc", label: "Cultural Studies - Western", note: "" },
     ],
   },
   {
     id: "ha",
     label: "Humanities & the Arts",
     subs: [
-      { id: "ha-hpp", label: "Historical & Philosophical Perspectives", note: "" },
-      { id: "ha-la",  label: "Literature & the Arts", note: "" },
+      { id: "ha-hpp", label: "Humanities - Hist & Phil", note: "" },
+      { id: "ha-la",  label: "Humanities - Lit & Arts", note: "" },
     ],
   },
   {
     id: "ns",
     label: "Natural Sciences & Technology",
     subs: [
-      { id: "ns-ps", label: "Physical Sciences", note: "" },
-      { id: "ns-ls", label: "Life Sciences", note: "" },
+      { id: "ns-ps", label: "Nat Sci & Tech - Phys Sciences", note: "" },
+      { id: "ns-ls", label: "Nat Sci & Tech - Life Sciences", note: "" },
     ],
   },
   {
     id: "qr",
     label: "Quantitative Reasoning",
     subs: [
-      { id: "qr-1", label: "QR1", note: "" },
-      { id: "qr-2", label: "QR2", note: "" },
+      { id: "qr-1", label: "Quantitative Reasoning I", note: "" },
+      { id: "qr-2", label: "Quantitative Reasoning II", note: "" },
     ],
   },
   {
     id: "sb",
     label: "Social & Behavioral Sciences",
     subs: [
-      { id: "sb-ss", label: "Social Sciences", note: "" },
-      { id: "sb-bs", label: "Behavioral Sciences", note: "" },
+      { id: "sb-ss", label: "Social & Beh Sci - Soc Sci", note: "" },
+      { id: "sb-bs", label: "Social & Beh Sci - Beh Sci", note: "" },
     ],
   },
 ];
@@ -71,61 +73,94 @@ export default function Page() {
   const handleSubmit = async () => {
     setLoading(true);
     setResult("");
-    const courseData = "Will inject course data here upon Flask connection";
-
-    const prompt = `You are a helpful UIUC course advisor. A student is looking for gen-ed course recommendations. 
-Your job is to engage with the student in a warm, friendly tone, and provide course recommendations 
-tailored to their specified preferences in the form they will complete. 
-
-Here are the courses matching the student's filtered preferences:
-${courseData}
-(each course will include the Subject, Course Number, Name, Credit Hours, Days of Week, Start Time, End Time, Degree Attributes, Type, Instructors, Building, Room #)
-
-
-Only recommend 3-5 courses from the list provided above, don't suggest courses not in the given data.
-Using the course description provided, provide a course summary about the highlights of the class - specifically anything that aligns with the student's "Extra Preferences."
-The summary should implement a warm, lively tone, that will excite the student about the course! Also, provide additional information about the course, preferably in this format.
-"Based on your preferences, I would suggest these courses..."
-- {Subject | Course Number | Course Type} 
-Meeting Days: Days of Week, Location: {Building} + {Room #}
-Time: Start Time - End Time
-Credit Hours: {Credit Hours}
-Instructor: {Instructor}
-Brief Description here: {Description} - If the description is brief, provide a description based on the Course Subject and Degree Attributes
-If the student provides any extra preferences, explain how each course aligns with those preferences specifically.
-
-
-
-Their preferences:
-- Gen-ed subcategories: ${selectedSubs.length ? selectedSubs.join(", ") : "Any"}
-- Credit hours: ${credits || "Any"}
-- Part of term: ${selectedTerms.length ? selectedTerms.join(", ") : "Any"}
-- Preferred days: ${selectedDays.length ? selectedDays.join(", ") : "Any"}
-- Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
-- Extra preferences: ${extra || "None"}
-
-If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
-
-`;
-
+    const allSubs = GENED_TREE.flatMap(cat => cat.subs); //puts all categories into one array
+    const finalSelectedSubs = new Array(selectedSubs.length);
+    for (let i = 0; i < selectedSubs.length; i++) {
+      const match = allSubs.find(sub => sub.id === selectedSubs[i]);
+      if (match === undefined) {
+        finalSelectedSubs[i]= "";
+      } else {
+        finalSelectedSubs[i] = match.label;
+      }
+    }
+    const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("http://localhost:5000/filter", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          selectedSubs: finalSelectedSubs,
+          credits: credits,
+          selectedDays: selectedDays,
+          selectedTerms: finalSelectedTerms,
+          startTime: startTime,
+          endTime: endTime
+          }),
+      });
+      const courses = await response.json();
+      let courseData = "";
+      if (courses.length === 0) {
+        courseData = "No courses found matching the student's preferences.";
+      } else {
+        courseData = courses.map((course: any)  => { return `${course.Subject} ${course.Number} - ${course.Name} 
+        Type: ${course.Type} | Days: ${course["Days of Week"]} 
+        Time: ${course["Start Time"]} - ${course["End Time"]} 
+        Credits: ${course["Credit Hours"]} | Degree Attributes: ${course["Degree Attributes"]}
+        Building: ${course.Building} | Room: ${course.Room}
+        Instructor: ${course.Instructors}`}).join("\n\n");
+      }
+      
+      
+      const prompt = `You are a helpful UIUC course advisor. A student is looking for gen-ed course recommendations. 
+      Your job is to engage with the student in a warm, friendly tone, and provide course recommendations 
+      tailored to their specified preferences in the form they will complete. 
+
+      Here are the courses matching the student's filtered preferences:
+      ${courseData}
+      (each course will include the Subject, Course Number, Name, Credit Hours, Days of Week, Start Time, End Time, Degree Attributes, Type, Instructors, Building, Room #)
+
+      Only recommend 3-5 courses from the list provided above, don't suggest courses not in the given data.
+      Using the course description provided, provide a course summary about the highlights of the class - specifically anything that aligns with the student's "Extra Preferences."
+      The summary should implement a warm, lively tone, that will excite the student about the course! Also, provide additional information about the course, preferably in this format.
+      "Based on your preferences, I would suggest these courses..."
+      {**Subject** **Course Number**: **Name** | **Course Type**} 
+      **Meeting Days**: Days of Week 
+      **Location**: {Building} + {**Room** #}
+      **Time**: Start Time - End Time
+      **Credit Hours**: {Credit Hours}
+      **Instructor**: {Instructor}
+      Brief Description here: {Description} - If the description is brief, provide a description based on the Course Subject and Degree Attributes
+      If the student provides any extra preferences, explain how each course aligns with those preferences specifically.
+
+      Their preferences:
+      - Gen-ed subcategories: ${selectedSubs.length ? selectedSubs.join(", ") : "Any"}
+      - Credit hours: ${credits || "Any"}
+      - Part of term: ${selectedTerms.length ? selectedTerms.join(", ") : "Any"}
+      - Preferred days: ${selectedDays.length ? selectedDays.join(", ") : "Any"}
+      - Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
+      - Extra preferences: ${extra || "None"}
+      For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
+      to verify that the other parts will align with their schedule.
+      Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
+      Please avoid unnecessary spacing between lines.
+      If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
+      `;
+
+        //this is calling Claude to get a response for the user
+      const res = await fetch("http://localhost:5000/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-      const data = await res.json();
-      const text = data.content?.map((b: { text: string }) => b.text || "").join("") || "No response.";
-      setResult(text);
-    } catch (e) {
-      setResult("Something went wrong. Please try again.");
-    }
+        body: JSON.stringify({prompt: prompt})});
+        const data = await res.json();
+        const text = data.response;
+        setResult(text);   
+  } catch (e) {
+    setResult("Something went wrong. Please try again.");
+  }
     setLoading(false);
+
   };
+  
 
   return (
     <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", minHeight: "100vh", background: "#faf7f2", color: "#1a1a1a" }}>
@@ -423,6 +458,16 @@ If there are no matches, apologize and suggest that the user change their filter
           max-height: 620px;
           overflow-y: auto;
         }
+        
+        .result-card-body strong {
+          font-weight: bold;
+        }
+
+        .result-card-body h3 {
+           font-size: 1.2em;
+           font-weight: bold;
+        }
+
 
         .loading-dots span {
           display: inline-block;
@@ -543,8 +588,8 @@ If there are no matches, apologize and suggest that the user change their filter
               <label className="field-label">Credit Hours</label>
               <select className="styled-select" value={credits} onChange={e => setCredits(e.target.value)}>
                 <option value="">Any credit count</option>
-                {[1,2,3,4].map(n => <option key={n}>{n} credit{n > 1 ? "s" : ""}</option>)}
-              </select>
+                {[1,2,3,4].map(n => <option key={n} value={n}>{n} credit{n > 1 ? "s" : ""}</option>)} 
+              </select>  
             </div>
 
             <div className="field-group">
@@ -656,7 +701,7 @@ If there are no matches, apologize and suggest that the user change their filter
                 <div className="result-card-header">
                   ✦ &nbsp; AI Course Recommendations
                 </div>
-                <div className="result-card-body">{result}</div>
+                <div className="result-card-body"><ReactMarkdown>{result}</ReactMarkdown></div>
               </div>
             )}
 

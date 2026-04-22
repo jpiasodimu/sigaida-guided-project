@@ -1,11 +1,16 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import pandas as pd
+import anthropic
+import os
 from filter import filter_courses
 from datetime import time
 
+load_dotenv("../.env")
 app = Flask(__name__)
 CORS(app)
+
 
 #loading the csv just once
 df = pd.read_csv("./data/courses.csv")
@@ -59,6 +64,25 @@ def get_filtered_courses():
     )
     print("Result shape:", result.shape)
     print("Result head:", result.head())
-
+ #this turns the response into formatted json
     return Response(result.to_json(orient="records"), mimetype = 'application/json') # returning results as a JSON
+
+@app.route("/recommend", methods = ["POST"])
+def get_recommendation(): #collecting the recs from Claude
+   data = request.get_json() #what we formatted earlier
+   prompt = data.get("prompt")
+   client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_KEY"))
+   message = client.messages.create(
+       model = "claude-haiku-4-5-20251001",
+       max_tokens=1000,
+       messages=[{"role": "user", "content": prompt}]
+   )
+   if message.content and len(message.content) > 0: #checks for empty content
+        if hasattr(message.content[0], 'text'):#checks that the type is correct
+            content = message.content[0].text
+        else:
+            content = ""
+   else: 
+       content = ""
+   return jsonify({"response": content}) #returns Claude's response as a json
 
