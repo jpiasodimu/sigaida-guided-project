@@ -9,7 +9,7 @@ from datetime import time
 
 load_dotenv("../.env")
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 #loading the csv just once
