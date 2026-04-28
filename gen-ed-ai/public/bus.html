@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UIUC Bus Delay Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #faf7f2;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* Top bar */
+    .topbar {
+      background: #13294B;
+      color: #faf7f2;
+      padding: 14px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-label {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+    .topbar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    /* Hero */
+    .hero {
+      background: #e8e0d4;
+      border-bottom: 2px solid #13294B;
+      padding: 48px 48px 40px;
+    }
+    .hero-kicker {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #7a6e5f;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #1a1a1a;
+    }
+    .hero-title em { font-style: italic; color: #E84A27; }
+    .hero-sub {
+      margin-top: 12px;
+      font-size: 15px;
+      color: #5a5248;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* Main layout */
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 48px 80px;
+    }
+
+    /* Hour selector */
+    .hour-section {
+      margin-bottom: 40px;
+    }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #9a8e7e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #d4ccc0;
+    }
+    .field-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    /* Slider */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: #d4ccc0;
+      outline: none;
+      cursor: pointer;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      cursor: pointer;
+      border: 3px solid #faf7f2;
+      box-shadow: 0 0 0 2px #1a1a1a;
+    }
+    .hour-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      min-width: 110px;
+      text-align: right;
+      color: #1a1a1a;
+    }
+    .hour-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #9a8e7e;
+      letter-spacing: 0.05em;
+    }
+
+    /* Bus cards */
+    .routes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    @media (max-width: 600px) {
+      .routes-grid { grid-template-columns: 1fr; }
+      .main { padding: 32px 24px 60px; }
+      .hero { padding: 32px 24px; }
+      .topbar { padding: 14px 24px; }
+    }
+
+    .route-card {
+      background: #fff;
+      border: 1.5px solid #d4ccc0;
+      border-radius: 4px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .route-card:hover {
+      border-color: #1a1a1a;
+      box-shadow: 0 2px 12px rgba(26,26,26,0.08);
+    }
+
+    .delay-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: background 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .dot-green  { background: #2d7a3a; }
+    .dot-yellow { background: #b8860b; }
+    .dot-red    { background: #c0392b; }
+    .dot-gray   { background: #ccc; }
+
+    .route-info { flex: 1; }
+    .route-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .route-delay {
+      font-size: 13px;
+      color: #7a6e5f;
+      font-weight: 400;
+    }
+    .route-delay strong {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    /* Legend */
+    .legend {
+      background: #fff;
+      border: 1.5px solid #d4ccc0;
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .legend-title {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #9a8e7e;
+      font-weight: 500;
+    }
+    .legend-items {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #3d352c;
+    }
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    /* No data */
+    .no-data {
+      color: #9a8e7e;
+      font-style: italic;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <span class="topbar-label">University of Illinois · Urbana-Champaign</span>
+    <span class="topbar-logo">MTD•BUS</span>
+    <span class="topbar-label">Delay Predictor</span>
+  </div>
+
+  <div class="hero">
+    <p class="hero-kicker">✦ Real Data · MTD Routes</p>
+    <h1 class="hero-title">UIUC Bus <em>Delay</em> Predictor</h1>
+    <p class="hero-sub">See expected delays for each route based on historical data. Pick an hour to get started.</p>
+  </div>
+
+  <div class="main">
+
+    <div class="hour-section">
+      <div class="section-label">Time</div>
+      <label class="field-label">What hour are you travelling?</label>
+      <div class="slider-wrap">
+        <input type="range" class="slider" id="hourSlider" min="6" max="19" value="9" step="1"/>
+        <div class="hour-display" id="hourDisplay">9:00 AM</div>
+      </div>
+      <div class="hour-ticks">
+        <span>6 AM</span>
+        <span>9 AM</span>
+        <span>12 PM</span>
+        <span>3 PM</span>
+        <span>6 PM</span>
+      </div>
+    </div>
+
+    <div class="section-label">Routes</div>
+    <div class="routes-grid" id="routesGrid">
+      <div class="no-data">Loading data...</div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Delay Key</span>
+      <div class="legend-items">
+        <div class="legend-item"><div class="legend-dot" style="background:#2d7a3a"></div> &lt; 1 minute</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b8860b"></div> 1 – 3 minutes</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div> &gt; 3 minutes</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let busData = [];
+    let avgByRouteHour = {};
+
+    // Format hour to readable string
+    function formatHour(h) {
+      if (h === 12) return '12:00 PM';
+      if (h > 12) return `${h - 12}:00 PM`;
+      return `${h}:00 AM`;
+    }
+
+    // Get dot class based on delay (in minutes)
+    function getDotClass(delay) {
+      if (delay === null) return 'dot-gray';
+      if (delay < 1) return 'dot-green';
+      if (delay < 3) return 'dot-yellow';
+      return 'dot-red';
+    }
+
+    function getDelayLabel(delay) {
+      if (delay === null) return 'No data for this hour';
+      if (delay < 1) return `<strong>${delay.toFixed(1)} min</strong> avg delay — on time`;
+      if (delay < 3) return `<strong>${delay.toFixed(1)} min</strong> avg delay — slight delay`;
+      return `<strong>${delay.toFixed(1)} min</strong> avg delay — significant delay`;
+    }
+
+    // Compute average delay per route per hour
+    function computeAverages(data) {
+      const groups = {};
+      data.forEach(d => {
+        const key = `${d.headsign}__${d.hour}`;
+        if (!groups[key]) groups[key] = { sum: 0, count: 0 };
+        groups[key].sum += d.delay;
+        groups[key].count += 1;
+      });
+      const result = {};
+      Object.entries(groups).forEach(([key, val]) => {
+        result[key] = val.sum / val.count;
+      });
+      return result;
+    }
+
+    // Render route cards for selected hour
+    function render(hour) {
+      document.getElementById('hourDisplay').textContent = formatHour(hour);
+
+      const routes = ['10W Gold', '22N Illini', '13N Silver', '12E Teal Orchard Downs'];
+      const grid = document.getElementById('routesGrid');
+      grid.innerHTML = '';
+
+      routes.forEach(route => {
+        const key = `${route}__${hour}`;
+        const avg = avgByRouteHour[key] ?? null;
+        const dotClass = getDotClass(avg);
+        const label = getDelayLabel(avg);
+
+        // Shorten long name for display
+        const displayName = route === '12E Teal Orchard Downs' ? '12E Teal' : route;
+
+        grid.innerHTML += `
+          <div class="route-card">
+            <div class="delay-dot ${dotClass}"></div>
+            <div class="route-info">
+              <div class="route-name">${displayName}</div>
+              <div class="route-delay">${label}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Slider interaction
+    document.getElementById('hourSlider').addEventListener('input', function() {
+      render(parseInt(this.value));
+    });
+
+    // Load JSON and init
+    fetch('/bus_json/bus_data.json')
+      .then(r => r.json())
+      .then(data => {
+        busData = data;
+        avgByRouteHour = computeAverages(data);
+        render(9);
+      })
+      .catch(() => {
+        document.getElementById('routesGrid').innerHTML = '<div class="no-data">Could not load bus data.</div>';
+      });
+  </script>
+
+</body>
+</html>
