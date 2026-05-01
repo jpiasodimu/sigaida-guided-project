@@ -66,7 +66,7 @@ export default function Home() {
       {/* Top bar */}
       <div style={{ background: "#13294B", color: "#faf7f2", padding: "14px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6 }}>University of Illinois · Urbana-Champaign</span>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, letterSpacing: "0.04em" }}>SIG•AIDA</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, letterSpacing: "0.04em" }}>ANYHOO</span>
         <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6 }}>Guided Project</span>
       </div>
 

@@ -150,6 +150,7 @@ export default function Page() {
       Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
       Please avoid unnecessary spacing between lines.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
+      If the user only selects one gen-ed, just give them general course recommendations for that category.
       `;
 
         //this is calling Claude to get a response for the user
@@ -513,7 +514,7 @@ export default function Page() {
         {/* Top bar */}
         <div className="hero-bar">
           <span className="hero-bar-label">University of Illinois · Urbana-Champaign</span>
-          <span className="hero-bar-logo">GEN•ED</span>
+          <span className="hero-bar-logo">ANYHOO</span>
           <span className="hero-bar-label">Course Finder</span>
         </div>
 
