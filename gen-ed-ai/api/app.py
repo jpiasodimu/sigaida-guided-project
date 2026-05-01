@@ -6,8 +6,9 @@ import anthropic
 import os
 from filter import filter_courses
 from datetime import time
+from google import genai
 
-load_dotenv("../.env")
+load_dotenv(".env")
 app = Flask(__name__)
 CORS(app)
 
@@ -84,3 +85,4 @@ def get_recommendation():
     else:
         content = ""
     return jsonify({"response": content}) #returns Claude's response as a json
+

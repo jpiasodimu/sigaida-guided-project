@@ -73,7 +73,9 @@ export default function Page() {
   const handleSubmit = async () => {
     setLoading(true);
     setResult("");
-    const allSubs = GENED_TREE.flatMap(cat => cat.subs); //puts all categories into one array
+    const allSubs = GENED_TREE.flatMap(cat =>
+      cat.subs.length === 0 ? [{ id: cat.id, label: cat.label, note: "" }] : cat.subs
+    ); //puts all categories into one array
     const finalSelectedSubs = new Array(selectedSubs.length);
     for (let i = 0; i < selectedSubs.length; i++) {
       const match = allSubs.find(sub => sub.id === selectedSubs[i]);
