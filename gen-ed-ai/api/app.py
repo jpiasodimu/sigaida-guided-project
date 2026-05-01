@@ -6,7 +6,6 @@ import anthropic
 import os
 from filter import filter_courses
 from datetime import time
-from google import genai
 
 load_dotenv(".env")
 app = Flask(__name__)

@@ -63,7 +63,10 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     row_end = row.get("End Time")
 
     if row_start and pd.notna(row_start):
-        row_start = datetime.strptime(str(row_start), "%I:%M %p").time()
+       try: 
+          row_start = datetime.strptime(str(row_start), "%I:%M %p").time()
+       except ValueError:
+           return False
 
     if row_end and pd.notna(row_end):
         row_end = datetime.strptime(str(row_end), "%I:%M %p").time()

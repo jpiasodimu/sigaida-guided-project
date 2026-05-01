@@ -71,6 +71,10 @@ export default function Page() {
     setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
 
   const handleSubmit = async () => {
+    if (selectedSubs.length === 0) {
+      setResult("Please select at least one gen-ed category to get course recommendations.");
+      return;
+    }
     setLoading(true);
     setResult("");
     const allSubs = GENED_TREE.flatMap(cat =>
