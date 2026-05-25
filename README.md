@@ -11,20 +11,20 @@ Within the 'gen-ed-ai' folder, the CSS stylesheet, React formatting code, as wel
 
 ## Project Structure
 sigaida-guided-project/<br>
-&nbsp;&nbsp; bus-data/<br>
+&nbsp; bus-data/<br>
 &nbsp;&nbsp;&nbsp; data/ --> Sample data from MTD website GTFS Feed <br>
 &nbsp;&nbsp;&nbsp; output/ --> Collected CSV data<br>
 &nbsp;&nbsp;&nbsp; src/ --> Python script (main) and notebook <br>
-&nbsp;&nbsp; gen-ed-ai/ <br>
+&nbsp; gen-ed-ai/ <br>
 &nbsp;&nbsp;&nbsp; .next/ <br>
 &nbsp;&nbsp;&nbsp; api/ --> course catalog csv and Flask request and filter logic <br>
 &nbsp;&nbsp;&nbsp; app/ --> React pages and CSS style info <br>
 &nbsp;&nbsp;&nbsp; node_modules/ --> node module packages <br>
 &nbsp;&nbsp;&nbsp; notebooks/ --> Python notebook for testing course filter logic <br>
 &nbsp;&nbsp;&nbsp; public/ --> Bus data JSON and image files <br>
-&nbsp;&nbsp; venv/ <br>
-&nbsp;&nbsp; .env  <br>
-&nbsp;&nbsp; README.md <br>
+&nbsp; venv/ <br>
+&nbsp; .env  <br>
+&nbsp; README.md <br>
 
 ## Setup
 1. Clone the repo
