@@ -7,20 +7,20 @@
 
 ## Project Structure
 sigaida-guided-project/<br>
-  bus-data/<br>
-  data/ --> Sample data from MTD website GTFS Feed
-output/ --> Collected CSV data
-├── src/ --> Python script (main) and notebook
-├── gen-ed-ai/   
-├── .next/
-├── api/ --> course catalog csv and Flask request and filter logic
-├── app/ --> React pages and CSS style info
-├── node_modules/ --> node module packages
-├── notebooks/ --> Python notebook for testing course filter logic
-├── public/ --> Bus data JSON and image files
-├── venv/            
-├── .env
-└── README.md
+&nbsp; bus-data/<br>
+&nbsp;&nbsp; data/ --> Sample data from MTD website GTFS Feed <br>
+&nbsp;&nbsp; output/ --> Collected CSV data<br>
+&nbsp;&nbsp; src/ --> Python script (main) and notebook <br>
+&nbsp; gen-ed-ai/ <br>
+&nbsp;&nbsp; .next/ <br>
+&nbsp;&nbsp; api/ --> course catalog csv and Flask request and filter logic <br>
+&nbsp;&nbsp; app/ --> React pages and CSS style info <br>
+&nbsp;&nbsp; node_modules/ --> node module packages <br>
+&nbsp;&nbsp; notebooks/ --> Python notebook for testing course filter logic <br>
+&nbsp;&nbsp; public/ --> Bus data JSON and image files <br>
+&nbsp; venv/ <br>
+&nbsp; .env  <br>
+&nbsp; README.md <br>
 
 ## Setup
 1. Clone the repo
