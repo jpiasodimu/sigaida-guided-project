@@ -29,12 +29,12 @@ sigaida-guided-project/<br>
 4. Add your API key to .env
 
 ## How to run the data collector
-python bus-data/src/main.py
+In a terminal enter: python bus-data/src/main.py
 
 ## How to run the web app
 Ensure you are in the gen-ed-ai folder <br>
-To run Next.js: Switch to the api folder and open a terminal and do: npm run dev <br>
-To run Flask: In another terminal, do: python app.py, then flask --app app run <br>
+To run Next.js: Switch to the api folder and open a terminal and enter: npm run dev <br>
+To run Flask: In another terminal, enter: python app.py, then flask --app app run <br>
 
 ## Contributors
 - Jpia S. — bus data collection, flask requests and prompt creation
