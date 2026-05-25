@@ -6,7 +6,8 @@
 
 
 ## Project Structure
-sigaida-guided-project/ \ 
+sigaida-guided-project/ \
+
   bus-data/ \
   data/ --> Sample data from MTD website GTFS Feed
 output/ --> Collected CSV data
