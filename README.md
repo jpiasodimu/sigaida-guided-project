@@ -34,8 +34,8 @@ sigaida-guided-project/<br>
 
 ## How to run the data collector
 In a terminal enter: python bus-data/src/main.py <br>
-*You can view the data in 'bus-data/output/departures.csv'
-*It's best to run this during the UIUC school year, to get the most accurate data, since out-of-season operation times for the MTD system may differ and not fully represent student traffic
+*You can view the data in 'bus-data/output/departures.csv' <br>
+*It's best to run this during the UIUC school year, to get the most accurate data, since out-of-season operation times for the MTD system may differ and not fully represent student traffic<br>
 
 ## How to run the web app
 Ensure you are in the gen-ed-ai folder <br>
