@@ -1,14 +1,14 @@
 # SIGAIDA Guided Project
 
 ## What this project does
-- This project includes a bus-data folder, with our script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. 
+- This project includes a bus-data folder, with our Python script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. 
 
 
 
 ## Project Structure
-sigaida-guided-project/
- bus-data/ 
- data/ --> Sample data from MTD website GTFS Feed
+sigaida-guided-project/ \ 
+  bus-data/ \
+  data/ --> Sample data from MTD website GTFS Feed
 output/ --> Collected CSV data
 ├── src/ --> Python script (main) and notebook
 ├── gen-ed-ai/   
