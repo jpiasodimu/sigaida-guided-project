@@ -1,7 +1,11 @@
 # SIGAIDA Guided Project
 
 ## What this project does
-- This project includes a bus-data folder, with our Python script used for collecting bus data, as well as the gen-ed-ai folder, which includes CSS, Typescript, and Node.js functionality used to create our course-recommender website. 
+- This project allows you to run the web app for our AI Gen-Ed Recommender (UIUC courses) + Bus Delay Predictor. The main folders are the 'bus-data' and 'gen-ed-ai' folders. <br>
+
+The 'bus-data' folder contains the CSV data collected from multiple bus routes on campus (10E Gold, 12W Teal, 22N Illini, and 13N Silver) during 3 school days, and the script for collecting bus data. <br>
+
+Within the 'gen-ed-ai' folder, the CSS stylesheet, React formatting code, as well as the course CSV and Python filtering logic and Flask script are accessible. <br>
 
 
 
@@ -37,8 +41,8 @@ Run Next.js: Switch to the api folder and open a terminal and enter: npm run dev
 Run Flask: In another terminal, enter: python app.py, then flask --app app run <br>
 
 ## Contributors
-- Jpia S. — bus data collection, flask requests and prompt creation
-- Sandy L. — web app (both bus delay and course recommender), course filtering logic 
+- Jpia S. - bus data collection, flask requests and prompt creation
+- Sandy L. - web app (both bus delay and course recommender), course filtering logic 
 
 ## Tools & Attribution
 - Claude (Anthropic) - code assistance and debugging throughout development
