@@ -6,9 +6,8 @@
 
 
 ## Project Structure
-sigaida-guided-project/ \
-
-  bus-data/ \
+sigaida-guided-project/<br>
+  bus-data/<br>
   data/ --> Sample data from MTD website GTFS Feed
 output/ --> Collected CSV data
 ├── src/ --> Python script (main) and notebook
