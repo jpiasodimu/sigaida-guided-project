@@ -1,7 +1,7 @@
 # SIGAIDA Guided Project
 
 ## What this project does
-- This project allows you to run the web app for our AI Gen-Ed Recommender (UIUC courses) + Bus Delay Predictor. The main folders are the 'bus-data' and 'gen-ed-ai' folders. <br>
+This project allows you to run the web app for our AI Gen-Ed Recommender (UIUC courses) + Bus Delay Predictor. The main folders are the 'bus-data' and 'gen-ed-ai' folders. <br>
 
 The 'bus-data' folder contains the CSV data collected from multiple bus routes on campus (10E Gold, 12W Teal, 22N Illini, and 13N Silver) during 3 school days, and the script for collecting bus data. <br>
 
