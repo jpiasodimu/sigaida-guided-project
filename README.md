@@ -32,9 +32,9 @@ sigaida-guided-project/<br>
 python bus-data/src/main.py
 
 ## How to run the web app
-Ensure you are in the gen-ed-ai folder
-To run Next.js: Switch to the api folder and open a terminal and do: npm run dev
-To run Flask: In another terminal, do: python app.py, then flask --app app run
+Ensure you are in the gen-ed-ai folder <br>
+To run Next.js: Switch to the api folder and open a terminal and do: npm run dev <br>
+To run Flask: In another terminal, do: python app.py, then flask --app app run <br>
 
 ## Contributors
 - Jpia S. — bus data collection, flask requests and prompt creation
