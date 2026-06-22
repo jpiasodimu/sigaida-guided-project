@@ -91,7 +91,7 @@ export default function Page() {
     }
     const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
     try {
-      const response = await fetch("http://localhost:5001/filter", {
+      const response = await fetch("http://localhost:5000/filter", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -154,7 +154,7 @@ export default function Page() {
       `;
 
         //this is calling Claude to get a response for the user
-      const res = await fetch("http://localhost:5001/recommend", {
+      const res = await fetch("http://localhost:5000/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({prompt: prompt})});
