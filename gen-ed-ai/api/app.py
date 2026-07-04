@@ -53,13 +53,14 @@ def get_filtered_courses():
         end_time = time.fromisoformat(data.get("endTime"))
 
     result = filter_courses( #filtering courses based off vars
-        df,
         gen_ed=gen_ed,
         credits=credits,
         days=days,
         part_of_term=part_of_term,
         start_time=start_time,
-        end_time=end_time
+        end_time=end_time,
+        semester=None,
+        year=None,
     )
     return Response(result.to_json(orient="records"), mimetype="application/json")
 

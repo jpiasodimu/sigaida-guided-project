@@ -13,6 +13,11 @@ const GENED_TREE = [
     subs: []
   },
   {
+    id: "ci",
+    label: "Composition I",
+    subs: []
+  },
+  {
     id: "cs",
     label: "Cultural Studies",
     subs: [
@@ -25,8 +30,8 @@ const GENED_TREE = [
     id: "ha",
     label: "Humanities & the Arts",
     subs: [
-      { id: "ha-hpp", label: "Humanities - Hist & Phil", note: "" },
-      { id: "ha-la",  label: "Humanities - Lit & Arts", note: "" },
+      { id: "ha-hpp", label: "Humanities – Hist & Phil", note: "" },
+      { id: "ha-la",  label: "Humanities – Lit & Arts", note: "" },
     ],
   },
   {
