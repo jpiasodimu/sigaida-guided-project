@@ -6,6 +6,7 @@ import anthropic
 import os
 from filter import filter_courses
 from datetime import time
+from supabase import create_client
 
 load_dotenv(".env")
 app = Flask(__name__)
@@ -18,7 +19,10 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
     return response
 
-
+# Connect to Supabase using environment variables
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.route("/filter", methods=["POST", "OPTIONS"])
 def get_filtered_courses():
@@ -62,6 +66,33 @@ def get_filtered_courses():
         year=2026,
     )
     return Response(result.to_json(orient="records"), mimetype="application/json")
+    # Get semester and year from request, default to fall 2026 if not provided
+    semester = data.get("semester", "fall")
+    year = int(data.get("year", 2026))  
+
+    try:
+        # Query sections for the given semester and year, joining with courses table
+        response = supabase.table("sections") \
+            .select("*, courses(*)") \
+            .eq("semester", semester) \
+            .eq("year", year) \
+            .execute()
+        # Convert Supabase response to a pandas DataFrame for filtering
+        df = pd.DataFrame(response.data)
+        # Filter courses based on user preferences
+        result = filter_courses(
+            df,
+            gen_ed=gen_ed,
+            credits=credits,
+            days=days,
+            part_of_term=part_of_term,
+            start_time=start_time,
+            end_time=end_time
+        )
+        return Response(result.to_json(orient="records"), mimetype="application/json")
+    except Exception as e:
+        # Return error response if database query fails
+        return jsonify({"error": "Database connection failed", "detail": str(e)}), 500
 
 @app.route("/recommend", methods=["POST", "OPTIONS"])
 def get_recommendation():
