@@ -18,8 +18,7 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
     return response
 
-#loading the csv just once
-df = pd.read_csv("./data/courses.csv")
+
 
 @app.route("/filter", methods=["POST", "OPTIONS"])
 def get_filtered_courses():
@@ -30,11 +29,11 @@ def get_filtered_courses():
     if not data.get("selectedSubs"):
         gen_ed = None #storing user preferences according to keys in page.tsx
     else:
-        gen_ed = ",".join(data.get("selectedSubs"))
+        gen_ed = data.get("selectedSubs") #now will be a list of geneds, not a string
     if data.get("credits") == "" or data.get("credits") is None:
         credits = None
-    else:
-        credits = data.get("credits") + " hours."
+    else: #supabase will type cast the user's info to an int 
+        credits = int(data.get("credits"))
     if not data.get("selectedDays"):
         days = None #storing user preferences according to keys in page.tsx
     else:
@@ -43,11 +42,11 @@ def get_filtered_courses():
         part_of_term = None #storing user preferences according to keys in page.tsx
     else:
         part_of_term = ",".join(data.get("selectedTerms"))
-    if data.get("startTime") == "":
+    if (data.get("startTime") == "") | (data.get("startTime") == "N/A"):
         start_time = None
     else:
         start_time = time.fromisoformat(data.get("startTime"))
-    if data.get("endTime") == "":
+    if (data.get("endTime") == "") | (data.get("endTime") == "N/A"):
         end_time = None
     else:
         end_time = time.fromisoformat(data.get("endTime"))
@@ -59,8 +58,8 @@ def get_filtered_courses():
         part_of_term=part_of_term,
         start_time=start_time,
         end_time=end_time,
-        semester=None,
-        year=None,
+        semester="fall",
+        year=2026,
     )
     return Response(result.to_json(orient="records"), mimetype="application/json")
 

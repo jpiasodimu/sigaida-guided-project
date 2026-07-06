@@ -15,31 +15,16 @@ supabase = create_client(url, key)
 # cause the whole course to be rejected.
 
 RAW_TO_SIMPLE_TYPE = {
-    "Lecture": "Lecture",
-    "Online Lecture": "Lecture",
-    "Lecture-Discussion": "Lecture-Discussion",
-    "Online Lecture Discussion": "Lecture-Discussion",
-
-    "Discussion/Recitation": "Discussion",
-    "Online Discussion": "Discussion",
-
-    "Laboratory": "Lab",
-    "Online Lab": "Lab",
-    "Laboratory-Discussion": "Lab",
-
-    "Online": "Online course",
-
-    "Independent Study": None,
-    "Conference": None,
-    "Seminar": None,
-    "Study Abroad": None,
-    "Internship": None,
-    "Research": None,
-    "Travel": None,
-    "Studio": None,
-    "Practice": None,
-    "Quiz": None,
-    "Packaged Section": None,
+    "DIS": "Discussion",
+    "LAB": "Lab",
+    "LBD": "Lab",
+    "LCD": "Lecture-Discussion",
+    "LEC": "Lecture",
+    "OD": "Discussion",
+    "OLD": "Lecture-Discussion",
+    "IND": None,
+    "Q": None,
+    "ST": None,
 }
 
 
@@ -57,6 +42,7 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     Check whether ONE section (row) fits the user's schedule constraints.
     Returns True if it fits, False if it doesn't.
     """
+
     # Days filter
     if days:
         wanted_days = set(days)
@@ -71,15 +57,16 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     # Time filter: class must fit fully within the user's window
     row_start = row.get("start_time")
     row_end = row.get("end_time")
-
+    #parses rows using HH:MM:SS format for comparison
     if row_start and pd.notna(row_start):
        try: 
-          row_start = datetime.strptime(str(row_start), "%I:%M %p").time()
-       except ValueError:
+          row_start = datetime.strptime(str(row_start), "%H:%M:%S").time()
+       except ValueError as e:
            return False
+       
 
     if row_end and pd.notna(row_end):
-        row_end = datetime.strptime(str(row_end), "%I:%M %p").time()
+        row_end = datetime.strptime(str(row_end), "%H:%M:%S").time()
 
 
     if start_time is not None and row_start is not None:
@@ -89,7 +76,6 @@ def row_matches_schedule(row, days=None, start_time=None, end_time=None):
     if end_time is not None and row_end is not None:
         if row_end > end_time:
             return False
-
     return True
 
 
@@ -100,12 +86,12 @@ def course_matches_bundle(course_df, days=None, start_time=None, end_time=None):
     2. Every required component (lecture / discussion / lab) has at least ONE
        section that fits the user's days/time window
     """
+    #print("Bundle called!")
     course_df = course_df.copy()
     course_df["Simple Type"] = course_df["meeting_type"].apply(normalize_type)
 
-    # Reject the whole course if it contains any unsupported type
-    if course_df["Simple Type"].isna().any():
-        return False
+    # Filters to only keep sections that are valid/supported
+    course_df = course_df[course_df["Simple Type"].notna()]
 
     # Split rows by simplified type
     lecture_rows    = course_df[course_df["Simple Type"] == "Lecture"]
@@ -153,8 +139,8 @@ def filter_courses(
     part_of_term=None,
     start_time=None,
     end_time=None,
-    semester=None,
-    year=None,
+    semester="fall",
+    year=2026,
 ):
     """
     Main filtering function.
@@ -179,7 +165,7 @@ def filter_courses(
         query = query.overlaps("gen_ed_attribute", gen_ed)
     if credits is not None:
         query = query.eq("credit_hours", credits)
-    info = query.data
+    info = query.execute().data
     course_ids = []
     for row in info: #iterates through a list of dictionaries, and individually accesses ids
         course_ids.append(row["id"])
@@ -200,30 +186,40 @@ def filter_courses(
     else:
         section_query = []
 
-    courses_df = pd.DataFrame(info)
-    sections_df = pd.DataFrame(section_query)
+    courses_df = pd.DataFrame(info) #courses matching gen-eds and credits
+    sections_df = pd.DataFrame(section_query)# sections in the specific courses, that match the POT/year if selected
+    #print(courses_df["id"].head())
+    #print(sections_df["course_id"].head())  
     #keeps course_info, and section info in one place (subject #, name, gen_ed, times, days, bulding)
     merged_df = pd.merge(courses_df, sections_df, left_on="id", right_on="course_id")
-    
-    # result = df.copy()
+    print(f"Merged rows: {len(merged_df)}")
+    #print(merged_df[merged_df["meeting_type"].isna() | (merged_df["meeting_type"] == "ST")]["subject"].unique())
+    #print(merged_df["meeting_type"].unique())
+    result = merged_df.copy()
 
    
-    # # Group by course (Subject + Number) and validate the whole bundle
-    # # Essentially checks that all the required components fit a students schedule, for example if lecture/discussion and
-    # # student prefers MWF, checking that both lecture and discussion meet those parameters
-    # filtered = result.groupby(["Subject", "Number"]).filter(
-    #     lambda course: course_matches_bundle(
-    #         course,
-    #         days=days,
-    #         start_time=start_time,
-    #         end_time=end_time,
-    #     )
-    # )
-    # if days:
-    #     wanted_days = set(days)
-    #     filtered = filtered[
-    #         filtered["Days of Week"].fillna("").apply(
-    #             lambda x: bool(set(x).intersection(wanted_days))
-    #         )
-    #     ]
-    # return filtered
+    # Group by course (Subject + Number) and validate the whole bundle
+    # Essentially checks that all the required components fit a students schedule, for example if lecture/discussion and
+    # student prefers MWF, checking that both lecture and discussion meet those parameters
+    filtered = result.groupby(["subject", "number"]).filter(
+        #checking that the course works for the student's schedule - filters for times and days
+        lambda course: course_matches_bundle(
+            course,
+            days=days,
+            start_time=start_time,
+            end_time=end_time,
+        )
+    )
+    #if the student has preferred days, check that we're only keeping specific rows/sections matching their available days
+    if days:
+        wanted_days = set(days)
+        filtered = filtered[
+            filtered["days_of_week"].fillna("").apply(
+                lambda x: bool(set(x).intersection(wanted_days))
+            )
+        ]
+    return filtered
+#test case
+if __name__ == "__main__": #if file is being run directly, i.e. filter.py, but not app.py
+    result = filter_courses(gen_ed=["Humanities – Lit & Arts"], semester="fall", year=2026)
+    print(result)

@@ -60,6 +60,15 @@ const GENED_TREE = [
   },
 ];
 
+const formatTime = (time: string | null) => { /*this will accept strings or null strings*/
+  if (!time) return "N/A";
+  const [hours, minutes] = time.split(":").map(Number); //splits the time into hours and minutes
+  const displayHour = hours % 12 === 0 ? 12: hours % 12; //appropiately converts to regular time
+  const displayMinutes = minutes;
+  const amOrPm = hours >= 12 ? "PM" : "AM";
+  const formattedTime = displayHour + ":" + displayMinutes + " " + amOrPm;
+  return formattedTime;
+}
 export default function Page() {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
@@ -95,7 +104,7 @@ export default function Page() {
       }
     }
     const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
-    try {
+    try { //sending raw Data to flask
       const response = await fetch("http://localhost:5000/filter", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -112,13 +121,13 @@ export default function Page() {
       let courseData = "";
       if (courses.length === 0) {
         courseData = "No courses found matching the student's preferences.";
-      } else {
-        courseData = courses.map((course: any)  => { return `${course.Subject} ${course.Number} - ${course.Name} 
-        Type: ${course.Type} | Days: ${course["Days of Week"]} 
-        Time: ${course["Start Time"]} - ${course["End Time"]} 
-        Credits: ${course["Credit Hours"]} | Degree Attributes: ${course["Degree Attributes"]}
-        Building: ${course.Building} | Room: ${course.Room}
-        Instructor: ${course.Instructors}`}).join("\n\n");
+      } else { //displaying the info to the user
+        courseData = courses.map((course: any)  => { return `${course.subject} ${course.number} - ${course.name} 
+        Type: ${course.meeting_type} | Days: ${course["days_of_week"]} 
+        Time: ${formatTime(course["start_time"])} - ${formatTime(course["end_time"])} 
+        Credits: ${course["credit_hours"]} | Degree Attributes: ${course["gen_ed_attribute"]}
+        Building: ${course.building} | Room: ${course.room}
+        Instructor: ${course.instructor}`}).join("\n\n");
       }
       
       
@@ -139,6 +148,7 @@ export default function Page() {
       **Location**: {Building} + {**Room** #}
       **Time**: Start Time - End Time
       **Credit Hours**: {Credit Hours}
+      **Gen-Ed Categories**: {Gen Eds}
       **Instructor**: {Instructor}
       Brief Description here: {Description} - If the description is brief, provide a description based on the Course Subject and Degree Attributes
       If the student provides any extra preferences, explain how each course aligns with those preferences specifically.
@@ -150,10 +160,14 @@ export default function Page() {
       - Preferred days: ${selectedDays.length ? selectedDays.join(", ") : "Any"}
       - Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
       - Extra preferences: ${extra || "None"}
+      You may see multiple rows for the same course - each row representing a different course section. Please group sections by course code and present 
+      each course only ONCE, summarizing available section times for the different types of sections separately (i.e. discussion, lab, lecture, etc). 
+      Also, summarize the meeting days for the different sections separately as well (Lecture, discussions, lab, lecture-discussion, etc.)
       For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
       to verify that the other parts will align with their schedule.
+      If "Meeting Days" already addresses scheduled meeting times, and days, please omit the "Time" section
       Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
-      Please avoid unnecessary spacing between lines.
+      Please AVOID UNNECESSARY SPACING between lines, and keep bolding consistent as necessary.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
       If the user only selects one gen-ed, just give them general course recommendations for that category.
       `;
