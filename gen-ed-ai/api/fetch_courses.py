@@ -7,7 +7,7 @@ import time
 from dotenv import load_dotenv
 import os
 
-load_dotenv("../.env")
+load_dotenv(".env")
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_SERVICE_KEY")
 supabase = create_client(url, key)
