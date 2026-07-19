@@ -10,7 +10,7 @@ from supabase import create_client
 
 load_dotenv(".env")
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.after_request
 def add_cors_headers(response):
