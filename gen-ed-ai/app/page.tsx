@@ -84,7 +84,7 @@ export default function Home() {
       </div>
 
       {/* Cards */}
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "64px 48px 80px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div style={{ maxWidth: 500, margin: "0 auto", padding: "64px 48px 80px", display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
 
         <div className="card" onClick={() => router.push("/courses")}>
           <div className="accent-bar"></div>
