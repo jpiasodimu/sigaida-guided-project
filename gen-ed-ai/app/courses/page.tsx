@@ -105,7 +105,7 @@ export default function Page() {
     }
     const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
     try { //sending raw Data to flask
-      const response = await fetch("http://localhost:5000/filter", {
+      const response = await fetch("https://sigaida-guided-project-production.up.railway.app/filter", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -148,7 +148,6 @@ export default function Page() {
       **Location**: {Building} + {**Room** #}
       **Time**: Start Time - End Time
       **Credit Hours**: {Credit Hours}
-      **Gen-Ed Categories**: {Gen Eds}
       **Instructor**: {Instructor}
       Brief Description here: {Description} - If the description is brief, provide a description based on the Course Subject and Degree Attributes
       If the student provides any extra preferences, explain how each course aligns with those preferences specifically.
@@ -161,19 +160,31 @@ export default function Page() {
       - Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
       - Extra preferences: ${extra || "None"}
       You may see multiple rows for the same course - each row representing a different course section. Please group sections by course code and present 
-      each course only ONCE, summarizing available section times for the different types of sections separately (i.e. discussion, lab, lecture, etc). 
-      Also, summarize the meeting days for the different sections separately as well (Lecture, discussions, lab, lecture-discussion, etc.)
+      each course only ONCE. 
+      (Avoid UNNECESSARY SPACING)
+      Under "Meeting Days," create a separate header type per each section type and list the dates/times under bullet points, for example:
+      Lectures (bolded):
+      (bullet point) Mondays & Wednesdays:
+      - 9:00-9:30 AM, Loomis Laboratory, Room 141
+      (bullet point) Tuedays & Thursdays:
+      -  10:00-10:30 AM, Sydney Lu, Room 107
+      -  11:00-11:30 AM, Sydney Lu, Room 115
+      Labs (bolded):
+      (bullet point) Mondays:
+      - 9:00-9:50 AM, CIF, Room 241
+      - 10:00-10:50 AM, Sydney Lu, 116
+      (bullet point) Thursdays:
+      - 11:00-11:50 AM, Siebel Center for CS, 120
       For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
       to verify that the other parts will align with their schedule.
-      If "Meeting Days" already addresses scheduled meeting times, and days, please omit the "Time" section
       Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
-      Please AVOID UNNECESSARY SPACING between lines, and keep bolding consistent as necessary.
+      Please AVOID UNNECESSARY SPACING between lines.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
       If the user only selects one gen-ed, just give them general course recommendations for that category.
       `;
 
         //this is calling Claude to get a response for the user
-      const res = await fetch("http://localhost:5000/recommend", {
+      const res = await fetch("https://sigaida-guided-project-production.up.railway.app/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({prompt: prompt})});
