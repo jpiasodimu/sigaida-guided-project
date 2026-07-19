@@ -175,8 +175,10 @@ export default function Page() {
       - 10:00-10:50 AM, Sydney Lu, 116
       (bullet point) Thursdays:
       - 11:00-11:50 AM, Siebel Center for CS, 120
+      If fewer than 3 courses match, only recommend what's available.
       For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
       to verify that the other parts will align with their schedule.
+      
       Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
       Please AVOID UNNECESSARY SPACING between lines.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
