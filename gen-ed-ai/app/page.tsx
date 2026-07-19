@@ -96,15 +96,6 @@ export default function Home() {
           <div className="card-cta">Open tool →</div>
         </div>
 
-        <div className="card" onClick={() => router.push("/bus.html")}>
-          <div className="accent-bar"></div>
-          <div className="card-icon">🚌</div>
-          <div className="card-title">Bus Delay Predictor</div>
-          <div className="card-desc">
-            Check expected delays for the 4 MTD routes — Gold, Illini, Silver, and Teal — based on historical data by hour of day.
-          </div>
-          <div className="card-cta">Open tool →</div>
-        </div>
 
       </div>
     </div>
