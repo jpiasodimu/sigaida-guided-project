@@ -162,23 +162,10 @@ export default function Page() {
       You may see multiple rows for the same course - each row representing a different course section. Please group sections by course code and present 
       each course only ONCE. 
       (Avoid UNNECESSARY SPACING)
-      Under "Meeting Days," create a separate header type per each section type and list the dates/times under bullet points, for example:
-      Lectures (bolded):
-      (bullet point) Mondays & Wednesdays:
-      - 9:00-9:30 AM, Loomis Laboratory, Room 141
-      (bullet point) Tuedays & Thursdays:
-      -  10:00-10:30 AM, Sydney Lu, Room 107
-      -  11:00-11:30 AM, Sydney Lu, Room 115
-      Labs (bolded):
-      (bullet point) Mondays:
-      - 9:00-9:50 AM, CIF, Room 241
-      - 10:00-10:50 AM, Sydney Lu, 116
-      (bullet point) Thursdays:
-      - 11:00-11:50 AM, Siebel Center for CS, 120
       If fewer than 3 courses match, only recommend what's available.
       For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
       to verify that the other parts will align with their schedule.
-      
+      For courses with 2+ instructors, list 2 instructors then put (et. al) after.
       Feel free to add in a few emojis (appropriate for school/course context) to keep things lively!
       Please AVOID UNNECESSARY SPACING between lines.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
