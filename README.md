@@ -1,6 +1,6 @@
 # SIGAIDA Guided Project
 
-Live demo: [link](https://anyhoo.vercel.app/) + Source for the ingestion pipeline: `fetch_courses.py`
+**[Live demo](https://anyhoo.vercel.app/)** · Ingestion pipeline source: [fetch_courses.py](https://github.com/jpiasodimu/sigaida-guided-project/blob/main/gen-ed-ai/api/fetch_courses.py)
 
 ## What this project does
 
