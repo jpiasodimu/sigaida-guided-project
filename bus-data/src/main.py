@@ -1,4 +1,5 @@
-
+import os
+from dotenv import load_dotenv
 import pandas as pd 
 import requests
 import time 
@@ -6,12 +7,14 @@ from datetime import datetime
 
 stops = ["PAR:2", "ARYWRT:5", "PLAZA:4", "IU:1", "LSE:8"]
 
+load_dotenv()
+MTD_KEY = os.getenv("MTD_API_KEY")
 
 while True:
     timestamp = datetime.now()
     all_departures = []
     for stop in stops: 
-        url = f"https://developer.mtd.org/api/v2.2/json/getdeparturesbystop?key=c097f4c423e7471eb40a606d859ce9e0&stop_id={stop}"
+        url = f"https://developer.mtd.org/api/v2.2/json/getdeparturesbystop?key={MTD_KEY}&stop_id={stop}"
         try:
             response = requests.get(url)
             data = response.json()
