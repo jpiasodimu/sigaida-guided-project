@@ -67,7 +67,7 @@ export default function Home() {
       <div style={{ background: "#13294B", color: "#faf7f2", padding: "14px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6 }}>University of Illinois · Urbana-Champaign</span>
         <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, letterSpacing: "0.04em" }}>ANYHOO</span>
-        <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6 }}>Guided Project</span>
+        <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", opacity: 0.6 }}></span>
       </div>
 
       {/* Hero */}
@@ -78,7 +78,7 @@ export default function Home() {
             What would you like to <em style={{ fontStyle: "italic", color: "#E84A27" }}>explore</em>?
           </h1>
           <p style={{ marginTop: 20, fontSize: 16, color: "#5a5248", maxWidth: 480, lineHeight: 1.65, fontWeight: 300 }}>
-            Two tools built for UIUC students — find the right gen-ed course or check your bus before you leave.
+            Find the right gen-ed course for you!
           </p>
         </div>
       </div>
