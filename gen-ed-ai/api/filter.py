@@ -175,8 +175,7 @@ def filter_courses(
     if course_ids != []:
         #checks for all sections with the matching course_ids and part of term (If present)
         if part_of_term is not None:
-           terms = [t.strip() for t in part_of_term.split(",")]
-           section_query = section_query.in_("part_of_term", terms) #changed to union so any matching parts of terms can be selected
+           section_query = section_query.in_("part_of_term", part_of_term) #changed to union so any matching parts of terms can be selected
         if semester is not None:
            section_query = section_query.eq("semester", semester)
         if year is not None:
