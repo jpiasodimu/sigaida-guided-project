@@ -105,7 +105,8 @@ export default function Page() {
     }
     const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
     try { //sending raw Data to flask
-      const response = await fetch("https://sigaida-guided-project-production.up.railway.app/filter", {
+      //https://sigaida-guided-project-production.up.railway.app
+      const response = await fetch("https://sigaida-guided-project-production.up.railway.app", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -126,9 +127,11 @@ export default function Page() {
         Type: ${course.meeting_type} | Days: ${course["days_of_week"]} 
         Time: ${formatTime(course["start_time"])} - ${formatTime(course["end_time"])} 
         Credits: ${course["credit_hours"]} | Degree Attributes: ${course["gen_ed_attribute"]}
+        Term: ${course["part_of_term"] === "1" ? "Full Semester" : course["part_of_term"]};
         Building: ${course.building} | Room: ${course.room}
         Instructor: ${course.instructor}`}).join("\n\n");
-      }
+        console.log("Course data:" + courseData);
+      } // these are individual course sections and Claude groups by course to present to students
       
       
       const prompt = `You are a helpful UIUC course advisor. A student is looking for gen-ed course recommendations. 
@@ -144,6 +147,7 @@ export default function Page() {
       The summary should implement a warm, lively tone, that will excite the student about the course! Also, provide additional information about the course, preferably in this format.
       "Based on your preferences, I would suggest these courses..."
       {**Subject** **Course Number**: **Name** | **Course Type**} 
+      **Part Of Term**: {Term}
       **Meeting Days**: Days of Week 
       **Location**: {Building} + {**Room** #}
       **Time**: Start Time - End Time
@@ -169,10 +173,13 @@ export default function Page() {
       Please AVOID UNNECESSARY SPACING between lines.
       If there are no matches, apologize and suggest that the user change their filters slightly to find courses that may better match their needs.
       If the user only selects one gen-ed, just give them general course recommendations for that category.
+      Only use the exact meeting information provided in the course data. 
+      Do not infer, assume, or add any meeting times, days, locations, or other details that are not explicitly listed. If information is missing, leave it out rather than guessing.
       `;
 
         //this is calling Claude to get a response for the user
-      const res = await fetch("https://sigaida-guided-project-production.up.railway.app/recommend", {
+        //https://sigaida-guided-project-production.up.railway.app
+      const res = await fetch("https://sigaida-guided-project-production.up.railway.app", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({prompt: prompt})});
