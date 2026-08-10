@@ -646,19 +646,6 @@ export default function Page() {
                   >{d}</div>
                 ))}
               </div>
-              <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: "6px 18px" }}>
-                {[
-                  ["M", "Monday"],
-                  ["T", "Tuesday"],
-                  ["W", "Wednesday"],
-                  ["R", "Thursday"],
-                  ["F", "Friday"],
-                ].map(([key, full]) => (
-                  <span key={key} style={{ fontSize: 11, fontFamily: "'DM Sans', sans-serif", color: "#9a8e7e", letterSpacing: "0.04em" }}>
-                    <span style={{ fontWeight: 600, color: "#6b5d4f" }}>{key}</span> = {full}
-                  </span>
-                ))}
-              </div>
             </div>
 
             <div className="field-group">
@@ -673,9 +660,6 @@ export default function Page() {
                   <input type="time" className="styled-time" value={endTime} onChange={e => setEndTime(e.target.value)} />
                 </div>
               </div>
-              <p style={{ fontSize: 12, color: "#9a8e7e", marginTop: 8, fontFamily: "'DM Sans', sans-serif" }}>
-                e.g. 10:00 – 14:00 filters out early morning &amp; evening sections
-              </p>
             </div>
 
             <div className="divider" />

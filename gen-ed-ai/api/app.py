@@ -40,7 +40,7 @@ def get_filtered_courses():
     if not data.get("selectedTerms"):
         part_of_term = None #storing user preferences according to keys in page.tsx
     else:
-        part_of_term = ",".join(data.get("selectedTerms"))
+        part_of_term = data.get("selectedTerms")
     if (data.get("startTime") == "") | (data.get("startTime") == "N/A"):
         start_time = None
     else:
