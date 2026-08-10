@@ -106,7 +106,7 @@ export default function Page() {
     const finalSelectedTerms = selectedTerms.map(term => term === "Full Semester" ? "1" : term);
     try { //sending raw Data to flask
       //https://sigaida-guided-project-production.up.railway.app
-      const response = await fetch("https://sigaida-guided-project-production.up.railway.app", {
+      const response = await fetch("https://sigaida-guided-project-production.up.railway.app/filter", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -179,7 +179,7 @@ export default function Page() {
 
         //this is calling Claude to get a response for the user
         //https://sigaida-guided-project-production.up.railway.app
-      const res = await fetch("https://sigaida-guided-project-production.up.railway.app", {
+      const res = await fetch("https://sigaida-guided-project-production.up.railway.app/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({prompt: prompt})});
