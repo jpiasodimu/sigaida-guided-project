@@ -193,7 +193,10 @@ def filter_courses(
     #keeps course_info, and section info in one place (subject #, name, gen_ed, times, days, bulding)
     if sections_df.empty or courses_df.empty: #if there's nothing to return , return an empty frame instead of 500 error
         return pd.DataFrame()
-    merged_df = pd.merge(courses_df, sections_df, left_on="id", right_on="course_id")
+    if sections_df.empty:
+        merged_df = pd.DataFrame()
+    else:
+        merged_df = pd.merge(courses_df, sections_df, left_on="id", right_on="course_id")
     print(f"Merged rows: {len(merged_df)}")
     #print(merged_df[merged_df["meeting_type"].isna() | (merged_df["meeting_type"] == "ST")]["subject"].unique())
     #print(merged_df["meeting_type"].unique())
