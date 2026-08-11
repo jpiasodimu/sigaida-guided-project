@@ -70,7 +70,7 @@ for subject in subjects:
                   part_of_term = section.find('.//partOfTerm').text
                else:
                   part_of_term = ""
-
+#jijijdjifij
                for meeting in meetings:
                   if meeting.find('.//start') is not None:
                      if meeting.find('.//start').text == "ARRANGED":
