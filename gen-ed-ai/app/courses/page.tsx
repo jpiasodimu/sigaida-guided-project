@@ -164,7 +164,7 @@ export default function Page() {
       - Preferred time range: ${startTime && endTime ? `${startTime} – ${endTime}` : "Any"}
       - Extra preferences: ${extra || "None"}
       You may see multiple rows for the same course - each row representing a different course section. Please group sections by course code and present 
-      each course only ONCE. The info summarized for each course should represent ALL sections pertaining to that course, but keep it conscise.
+      each course only ONCE. The info summarized for each course should represent ALL sections pertaining to that course, keep it conscise but still summarize time ranges for course meetings, and meeting days for different section types.
       If fewer than 3 courses match, only recommend what's available.
       For courses with multiple parts, such as Discussion/Recitation and Lectures, provide a brief disclaimer that the student will need to check Course Explorer 
       to verify that the other parts will align with their schedule.
